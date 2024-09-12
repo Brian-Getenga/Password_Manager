@@ -1,0 +1,18 @@
+<!-- passwords/templates/passwords/home.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>My Passwords</h2>
+<a href="{% url 'add_password' %}" class="btn btn-primary mb-3">Add New Password</a>
+<ul class="list-group">
+    {% for password in passwords %}
+        <li class="list-group-item">
+            {{ password.title }} - {{ password.username }}
+            <a href="{% url 'update_password' password.pk %}" class="btn btn-warning btn-sm float-right ml-2">Edit</a>
+            <a href="{% url 'delete_password' password.pk %}" class="btn btn-danger btn-sm float-right">Delete</a>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No passwords available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Share File{% endblock %}
+
+{% block content %}
+<h2>Share File: {{ file.file.name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="file_id" value="{{ file.id }}">
+    <div class="mb-3">
+        <label for="recipient" class="form-label">Recipient Username</label>
+        <input type="text" class="form-control" id="recipient" name="recipient" required>
+    </div>
+    <div class="mb-3">
+        <label for="message" class="form-label">Message (optional)</label>
+        <textarea class="form-control" id="message" name="message"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Share</button>
+</form>
+
+<a href="{% url 'file_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+{% endblock %}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}File Store{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/7516121dff.js" crossorigin="anonymous"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .navbar {
+            background-color: #343a40; /* Change to your preferred color */
+            height: 80px; /* Increase height */
+            position: sticky;
+            top: 0;
+            z-index: 1020; /* Ensure navbar is above other content */
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem; /* Increase font size if needed */
+            font-weight: bold;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            overflow: hidden; /* Hide overflowing content */
+        }
+        
+        .sidebar:hover {
+            transform: translateX(0);
+        }
+        
+        .sidebar-link {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 5px;
+            position: relative;
+        }
+        
+        .sidebar-link:hover {
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        .card-img-top {
+            height: 90%;
+            object-fit: cover;
+        }
+        
+        .card {
+            transition: transform 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: scale(1.05);
+        }
+        
+        .icon-buttons {
+            display: none;
+        }
+        
+        .card:hover .icon-buttons {
+            display: flex;
+        }
+        
+        footer {
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer .btn-outline-dark {
+            color: #343a40;
+            border-color: #343a40;
+        }
+
+        footer .btn-outline-dark:hover {
+            background-color: #343a40;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'file_list' %}">
+                <i class="fas fa-store"></i> File Store
+            </a>
+            <div class="navbar-nav">
+                {% if user.is_authenticated %}
+                    <a class="nav-item nav-link" href="{% url 'file_list' %}">Files</a>
+                    <a class="nav-item nav-link" href="{% url 'password_list' %}">Passwords</a>
+                    <a class="nav-item nav-link" href="{% url 'generate_password' %}">Generate Password</a>
+                    <a class="nav-item nav-link" href="{% url 'shared_files' %}">Shared file</a>
+                    <a class="nav-item nav-link" href="{% url 'profile' %}">
+                        <i class="fas fa-user"></i> <!-- Profile icon -->
+                    </a>
+                    <a class="nav-item nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                        <i class="fas fa-sign-out-alt"></i> <!-- Logout icon -->
+                    </a>
+                {% else %}
+                    <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                    <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4 hgh">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <!-- Footer -->
+    <footer class="bg-light text-center text-lg-start mt-auto">
+        <div class="container p-4">
+            <!-- Section: Links -->
+            <section class="mb-4">
+                <a href="#" class="btn btn-outline-dark me-2">Privacy Policy</a>
+                <a href="#" class="btn btn-outline-dark me-2">Terms of Service</a>
+                <a href="#" class="btn btn-outline-dark">Contact Us</a>
+            </section>
+            <!-- Section: Social Media -->
+            <section class="mb-4">
+                <a href="https://facebook.com" target="_blank" class="btn btn-outline-dark me-2">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://twitter.com" target="_blank" class="btn btn-outline-dark me-2">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://instagram.com" target="_blank" class="btn btn-outline-dark me-2">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://linkedin.com" target="_blank" class="btn btn-outline-dark">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+            </section>
+        </div>
+        <!-- Copyright -->
+        <div class="text-center p-3 bg-dark text-light">
+            &copy; {{ current_year }} File Store. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to log out?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentYear = new Date().getFullYear();
+            document.querySelectorAll('.current-year').forEach(el => el.textContent = currentYear);
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

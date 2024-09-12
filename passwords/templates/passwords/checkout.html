@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+    <h2>Checkout</h2>
+    <div class="container mt-4">
+        <h4>{{ package.name }}</h4>
+        <p>Price: ${{ package.price }}</p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="package_id" value="{{ package.id }}">
+            <div class="form-group">
+                <label for="payment_method">Select Payment Method:</label>
+                <select name="payment_method" id="payment_method" class="form-control">
+                    <option value="paypal">PayPal</option>
+                    <option value="mpesa">M-Pesa</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Proceed to Payment</button>
+        </form>
+    </div>
+{% endblock %}

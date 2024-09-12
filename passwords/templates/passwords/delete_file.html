@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Deletion{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Confirm Deletion</h2>
+    <div class="alert alert-warning">
+        <p>Are you sure you want to delete the file "{{ file.name }}"?</p>
+        <p><strong>File Type:</strong> {{ file.get_file_type_display }}</p>
+        <p><strong>Uploaded At:</strong> {{ file.uploaded_at }}</p>
+    </div>
+
+    <form method="post" action="{% url 'delete_file' file.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'file_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

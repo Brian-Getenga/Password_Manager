@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    {% if user.profile.photo %}
+                        <img src="{{ user.profile.photo.url }}" class="img-fluid rounded-circle mb-3" alt="{{ user.username }}'s profile picture" style="width: 200px; height: 200px;">
+                    {% else %}
+                        <img src="https://via.placeholder.com/150" class="img-fluid rounded-circle mb-3" alt="Default profile picture">
+                    {% endif %}
+                    <h2 class="card-title">{{ user.username }}</h2>
+                    <p class="card-text">{{ user.email }}</p>
+                    <p class="card-text"><small class="text-muted">Last login: {{ user.last_login }}</small></p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar" role="progressbar" style="width: {{ storage_percentage }}%;" aria-valuenow="{{ storage_percentage }}" aria-valuemin="0" aria-valuemax="100">{{ storage_percentage }}%</div>
+                    </div>
+                    <a href="{% url 'upgrade_storage' %}" class="btn btn-primary">Upgrade Storage</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Update Profile</h3>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <fieldset class="form-group">
+                            {{ u_form|crispy }}
+                            {{ p_form|crispy }}
+                        </fieldset>
+                        <div class="form-group mt-3">
+                            <button class="btn btn-outline-info" type="submit">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h3 class="card-title">Password Management</h3>
+                    <a href="{% url 'change_password' %}" class="btn btn-primary">Change Password</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

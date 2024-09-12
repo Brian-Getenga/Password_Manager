@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit File{% endblock %}
+
+{% block content %}
+<h2>Edit File: {{ form.instance.file.name }}</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save changes</button>
+</form>
+<a href="{% url 'file_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+{% endblock %}

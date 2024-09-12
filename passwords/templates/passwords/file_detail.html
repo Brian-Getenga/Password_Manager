@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}File Details{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Back to File List Button -->
+        <a href="{% url 'file_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to File List
+        </a>
+
+        <!-- Action Icons -->
+        <div>
+            <a href="{% url 'download_file' file.id %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-download"></i>
+            </a>
+            <a href="#" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#shareModal" data-file-id="{{ file.id }}">
+                <i class="fas fa-share-alt"></i>
+            </a>
+            <form method="post" action="{% url 'delete_file' file.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this file?');">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% if file.file_type == 'photo' %}
+    <img id="photo" src="{{ file.file.url }}" class="img-fluid" alt="{{ file.file.name }}">
+    <button onclick="printPhoto()" class="btn btn-primary mt-3">Print Photo</button>
+    {% elif file.file_type == 'document' %}
+    <iframe id="document" src="{{ file.file.url }}" style="width: 100%; height: 500px; border: none;" title="{{ file.file.name }}"></iframe>
+    <button onclick="printDocument()" class="btn btn-primary mt-3">Print Document</button>
+    <div class="text-center mt-3">
+        <i class="fas fa-file-alt" style="font-size: 100px;"></i>
+    </div>
+    {% elif file.file_type == 'music' %}
+    <div class="text-center">
+        <i class="fas fa-music" style="font-size: 100px;"></i>
+    </div>
+    <audio class="w-100 mt-3" controls>
+        <source src="{{ file.file.url }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    {% elif file.file_type == 'video' %}
+    <video class="w-100 mt-3" controls>
+        <source src="{{ file.file.url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    {% else %}
+    <i class="fas fa-file" style="font-size: 100px;"></i>
+    {% endif %}
+
+    <div class="mt-3">
+        <h5>{{ file.file.name }}</h5>
+        <p>Uploaded on: {{ file.uploaded_at }}</p>
+        <p>Uploaded by: {{ file.user.username }}</p>
+        <p>File type: {{ file.get_file_type_display }}</p>
+    </div>
+
+    <div class="mt-3">
+        <a href="{% url 'update_file' file.id %}" class="btn btn-primary">Edit</a>
+        <form method="post" action="{% url 'delete_file' file.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shareModalLabel">Share File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="shareForm" method="post" action="{% url 'share_file' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" name="file_id" id="file-id">
+                    <div class="mb-3">
+                        <label for="recipient" class="form-label">Recipient Username</label>
+                        <input type="text" class="form-control" id="recipient" name="recipient" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message (optional)</label>
+                        <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Share</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function printPhoto() {
+        const photo = document.getElementById('photo');
+        const printWindow = window.open('', '', 'height=600,width=800');
+        printWindow.document.write('<html><head><title>Print Photo</title></head><body>');
+        printWindow.document.write(photo.outerHTML);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+    }
+
+    function printDocument() {
+        const documentIframe = document.getElementById('document');
+        const printWindow = window.open('', '', 'height=600,width=800');
+        printWindow.document.write('<html><head><title>Print Document</title></head><body>');
+        printWindow.document.write('<iframe src="' + documentIframe.src + '" style="width: 100%; height: 100%;" frameborder="0"></iframe>');
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+    }
+
+    // Set the file ID in the share modal
+    const shareModal = document.getElementById('shareModal');
+    shareModal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget;
+        const fileId = button.getAttribute('data-file-id');
+        document.getElementById('file-id').value = fileId;
+    });
+</script>
+
+{% endblock %}
